@@ -30,21 +30,22 @@ public class WeatherFrame extends JFrame {
 
 		container.setLayout(new BoxLayout(container, BoxLayout.PAGE_AXIS));
 
-		URL url = new URL(
-				"http://api.openweathermap.org/data/2.5/weather?q=Brooklyn&units=imperial");
-		URLConnection connection = url.openConnection();
-		InputStream in = connection.getInputStream();
-
-		byte b[] = new byte[4096];
-		int n = -1;
-		StringBuilder build = new StringBuilder();
-		while ((n = in.read(b)) != -1) {
-			// when input Stream gets to the end it will return a -1
-			build.append(new String(b, 0, n));
-		}
-		String json = build.toString();
-		Gson gson = new Gson();
-		WeatherNow now = gson.fromJson(json, WeatherNow.class);
+//		URL url = new URL(
+//				"http://api.openweathermap.org/data/2.5/weather?q=Brooklyn&units=imperial");
+//		URLConnection connection = url.openConnection();
+//		InputStream in = connection.getInputStream();
+//
+//		byte b[] = new byte[4096];
+//		int n = -1;
+//		StringBuilder build = new StringBuilder();
+//		while ((n = in.read(b)) != -1) {
+//			// when input Stream gets to the end it will return a -1
+//			build.append(new String(b, 0, n));
+//		}
+//		String json = build.toString();
+//		Gson gson = new Gson();
+//		WeatherNow now = gson.fromJson(json, WeatherNow.class);
+		
 		Weather[] descs = now.getWeather();
 
 		container.add(Box.createRigidArea(new Dimension(5, 5)));
@@ -72,6 +73,9 @@ public class WeatherFrame extends JFrame {
 		container.add(new JLabel("Min: "
 				+ String.valueOf(now.getMain().getTemp_min()) + " Max: "
 				+ String.valueOf(now.getMain().getTemp_max())));
+		
+		WeatherDownloadThread thread = new WeatherDownloadThread();
+		thread.start();
 	}
 
 	public static void main(String args[]) throws ClassNotFoundException,

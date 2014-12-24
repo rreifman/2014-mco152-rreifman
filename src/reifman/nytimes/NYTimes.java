@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Font;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -14,13 +13,16 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 
-
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JScrollBar;
 
+import org.apache.commons.io.IOUtils;
 
 import com.google.gson.Gson;
 
@@ -35,8 +37,15 @@ public class NYTimes extends JFrame{
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		
-		Container container = getContentPane();
+		Container window = getContentPane();
+		window.setBackground(Color.WHITE);
+		JScrollPane scroll = new JScrollPane();
+	
+		window.add(scroll);
 		
+		JPanel container = new JPanel();
+		window.add(container);
+
 		BoxLayout box = new BoxLayout(container, BoxLayout.PAGE_AXIS);
 		container.setLayout(box);
 		container.setBackground(Color.WHITE);
@@ -65,15 +74,8 @@ public class NYTimes extends JFrame{
 		URL url = new URL("http://api.nytimes.com/svc/search/v2/articlesearch.json?page=" + page + "&api-key=75a5bf657bc8110fc76df31ffc88f8ff%3A6%3A70537592");
 		URLConnection connect = url.openConnection();
 		InputStream in = connect.getInputStream();
-		
-		byte b[] = new byte[4096];
-		int n = -1;
-		StringBuilder build = new StringBuilder();
-		while ((n = in.read(b)) != -1) {
-			// when input Stream gets to the end it will return a -1
-			build.append(new String(b, 0, n));
-		}
-		String json = build.toString();
+
+		String json = IOUtils.toString(in);
 		
 		Gson gson = new Gson();
 		News news = gson.fromJson(json, News.class);
